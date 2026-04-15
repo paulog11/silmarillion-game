@@ -29,9 +29,10 @@ After reduction the engine deep-clones state (`JSON.parse/JSON.stringify`) befor
 
 | Action | Payload | Description |
 |---|---|---|
-| `PLAY_AGENT` | `playerId, locationId, cardId` | Place an agent; validates icon, cost, hand, and occupancy |
+| `PLAY_AGENT` | `playerId, locationId, cardId` | Place an agent; validates `agentIcons.includes(requiredIcon)`, cost, hand, and occupancy |
 | `PASS_TURN` | `playerId` | Log a pass; no state change beyond history |
 | `RESOLVE_CONFLICT` | _(none)_ | Delegate to `resolveConflictPhase()` |
+| `BUY_CARD` | `playerId, cardId, isReserve` | Delegate to `buyCard()` — purchase a market or reserve card; deducts `currentPurchasingPower`, adds card to discardPile, refills market row |
 
 ### Adding a new action
 

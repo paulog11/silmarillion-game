@@ -2,6 +2,8 @@
 import { onMounted, computed } from 'vue';
 import { useGameStore } from './stores/useGameStore';
 import { executeAutomataTurn } from './game-engine/automataLogic';
+import { CARD_REGISTRY } from './game-engine/data/cards';
+import { LOCATION_REGISTRY } from './game-engine/data/locations';
 
 const store = useGameStore();
 
@@ -22,11 +24,20 @@ const locations = computed(() => (state.value ? Object.values(state.value.locati
 
 function playAgent(locationId: string) {
   if (!human.value) return;
+  const requiredIcon = LOCATION_REGISTRY[locationId]?.requiredIcon;
+  const cardId = human.value.deck.hand.find((id) => {
+    const def = CARD_REGISTRY[id];
+    return def && (!requiredIcon || def.agentIcons.includes(requiredIcon));
+  });
+  if (!cardId) {
+    console.warn(`No playable card in hand for location "${locationId}".`);
+    return;
+  }
   store.sendAction({
     type: 'PLAY_AGENT',
     playerId: human.value.id,
     locationId,
-    cardId: 'card-placeholder',
+    cardId,
   });
 }
 

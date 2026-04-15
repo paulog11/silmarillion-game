@@ -2,82 +2,167 @@ import { LocationIconType } from '../types/primitives';
 
 export interface CardDefinition {
   id: string;
-  name: string;
-  icon: LocationIconType;
+  title: string;
+  /** All location icon types this card can satisfy when placing an agent. */
+  agentIcons: LocationIconType[];
+  /** Purchasing power contributed during the buy phase. */
+  purchasingPower: number;
+  /** Cost to buy from the market. 0 for non-purchasable (starter) cards. */
+  cost: number;
+  /** Troops instantly gained when played or revealed. */
+  troopsMustered: number;
 }
 
-/**
- * Registry of all playable human cards.
- * The engine looks up a card's icon here during PLAY_AGENT validation to
- * ensure it matches the target location's requiredIcon.
- *
- * Add a new entry for every card added to the game.
- */
 export const CARD_REGISTRY: Record<string, CardDefinition> = {
-  // --- Noble ---
-  'card-house-of-fingolfin': {
-    id: 'card-house-of-fingolfin',
-    name: 'House of Fingolfin',
-    icon: 'Noble',
+  // ---------------------------------------------------------------------------
+  // Starter deck — 10 cards dealt to the human player at game start.
+  // Duplicate titles use suffixed IDs so each physical card is addressable.
+  // ---------------------------------------------------------------------------
+
+  'starter-elven-scout-1': {
+    id: 'starter-elven-scout-1',
+    title: 'Elven Scout',
+    agentIcons: ['Wilderness', 'Lore'],
+    purchasingPower: 0,
+    cost: 0,
+    troopsMustered: 0,
   },
-  'card-thingol-decree': {
-    id: 'card-thingol-decree',
-    name: "Thingol's Decree",
-    icon: 'Noble',
+  'starter-elven-scout-2': {
+    id: 'starter-elven-scout-2',
+    title: 'Elven Scout',
+    agentIcons: ['Wilderness', 'Lore'],
+    purchasingPower: 0,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-envoy-1': {
+    id: 'starter-envoy-1',
+    title: 'Envoy',
+    agentIcons: ['Noble', 'Trade'],
+    purchasingPower: 0,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-envoy-2': {
+    id: 'starter-envoy-2',
+    title: 'Envoy',
+    agentIcons: ['Noble', 'Trade'],
+    purchasingPower: 0,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-sindarin-militia-1': {
+    id: 'starter-sindarin-militia-1',
+    title: 'Sindarin Militia',
+    agentIcons: ['Military'],
+    purchasingPower: 1,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-sindarin-militia-2': {
+    id: 'starter-sindarin-militia-2',
+    title: 'Sindarin Militia',
+    agentIcons: ['Military'],
+    purchasingPower: 1,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-sindarin-militia-3': {
+    id: 'starter-sindarin-militia-3',
+    title: 'Sindarin Militia',
+    agentIcons: ['Military'],
+    purchasingPower: 1,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-sindarin-militia-4': {
+    id: 'starter-sindarin-militia-4',
+    title: 'Sindarin Militia',
+    agentIcons: ['Military'],
+    purchasingPower: 1,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-call-to-arms': {
+    id: 'starter-call-to-arms',
+    title: 'Call to Arms',
+    agentIcons: ['Noble', 'Trade', 'Wilderness'],
+    purchasingPower: 0,
+    cost: 0,
+    troopsMustered: 0,
+  },
+  'starter-hidden-paths': {
+    id: 'starter-hidden-paths',
+    title: 'Hidden Paths',
+    agentIcons: ['Lore'],
+    purchasingPower: 1,
+    cost: 0,
+    troopsMustered: 0,
   },
 
-  // --- Military ---
-  'card-noldor-vanguard': {
-    id: 'card-noldor-vanguard',
-    name: 'Noldor Vanguard',
-    icon: 'Military',
+  // ---------------------------------------------------------------------------
+  // Market deck — purchasable cards.
+  // ---------------------------------------------------------------------------
+
+  'feanorian-vanguard': {
+    id: 'feanorian-vanguard',
+    title: 'Fëanorian Vanguard',
+    agentIcons: ['Military'],
+    purchasingPower: 0,
+    cost: 3,
+    troopsMustered: 2,
   },
-  'card-edain-warrior': {
-    id: 'card-edain-warrior',
-    name: 'Edain Warrior',
-    icon: 'Military',
+  'song-of-power': {
+    id: 'song-of-power',
+    title: 'Song of Power',
+    agentIcons: ['Lore', 'Noble'],
+    purchasingPower: 2,
+    cost: 4,
+    troopsMustered: 0,
+  },
+  'dwarven-smiths': {
+    id: 'dwarven-smiths',
+    title: 'Dwarven Smiths',
+    agentIcons: ['Trade'],
+    purchasingPower: 2,
+    cost: 2,
+    troopsMustered: 0,
+  },
+  'eagle-scout': {
+    id: 'eagle-scout',
+    title: 'Eagle Scout',
+    agentIcons: ['Wilderness', 'Military'],
+    purchasingPower: 1,
+    cost: 5,
+    troopsMustered: 1,
+  },
+  'helm-of-hador': {
+    id: 'helm-of-hador',
+    title: 'The Helm of Hador',
+    agentIcons: ['Noble'],
+    purchasingPower: 3,
+    cost: 6,
+    troopsMustered: 1,
   },
 
-  // --- Lore ---
-  'card-lore-of-aman': {
-    id: 'card-lore-of-aman',
-    name: 'Lore of Aman',
-    icon: 'Lore',
-  },
-  'card-melian-counsel': {
-    id: 'card-melian-counsel',
-    name: "Melian's Counsel",
-    icon: 'Lore',
-  },
+  // ---------------------------------------------------------------------------
+  // Reserve cards — always available for purchase, never removed from offer.
+  // ---------------------------------------------------------------------------
 
-  // --- Trade ---
-  'card-cirdan-fleet': {
-    id: 'card-cirdan-fleet',
-    name: "Círdan's Fleet",
-    icon: 'Trade',
+  'wandering-minstrel': {
+    id: 'wandering-minstrel',
+    title: 'Wandering Minstrel',
+    agentIcons: ['Lore'],
+    purchasingPower: 1,
+    cost: 2,
+    troopsMustered: 0,
   },
-  'card-dwarven-goods': {
-    id: 'card-dwarven-goods',
-    name: 'Dwarven Goods',
-    icon: 'Trade',
-  },
-
-  // --- Wilderness ---
-  'card-green-elves': {
-    id: 'card-green-elves',
-    name: 'Green Elves of Ossiriand',
-    icon: 'Wilderness',
-  },
-  'card-beorn-scout': {
-    id: 'card-beorn-scout',
-    name: 'Scout of the Wilds',
-    icon: 'Wilderness',
-  },
-
-  // Placeholder used in tests / dev before real cards are assigned
-  'card-placeholder': {
-    id: 'card-placeholder',
-    name: 'Placeholder Card',
-    icon: 'Military',
+  'sindarin-archer': {
+    id: 'sindarin-archer',
+    title: 'Sindarin Archer',
+    agentIcons: ['Military'],
+    purchasingPower: 0,
+    cost: 3,
+    troopsMustered: 1,
   },
 };

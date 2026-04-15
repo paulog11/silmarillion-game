@@ -41,6 +41,31 @@ Conditional rewards skip gracefully — they never throw. All other locations re
 
 ---
 
+## `marketActions.ts`
+
+### `buyCard(state, playerId, cardId, isReserve): GameState`
+
+Called by the engine `BUY_CARD` action. Pure — returns a new `GameState`.
+
+**Validation order (throws on failure):**
+1. Player exists.
+2. Card ID resolves in `CARD_REGISTRY`.
+3. Card belongs to the expected pool — `MARKET_CARD_IDS` when `isReserve === false`, `RESERVE_CARD_IDS` when `true`.
+4. For market purchases only: card is present in `state.market.visibleCards`.
+5. `player.currentPurchasingPower >= cardDef.cost`.
+
+**On success:**
+1. Deduct `cost` from `player.currentPurchasingPower`.
+2. Push `cardId` into `player.deck.discardPile`.
+3. For market purchases: remove `cardId` from `state.market.visibleCards`, then call `refillMarket()` to draw from `state.market.deck` until `visibleCards.length === 5` (or deck exhausted). Reserve buys never touch the market row.
+4. Append a purchase entry to `state.history`.
+
+`refillMarket()` is a private helper inside this file — no other caller needs it.
+
+**Note:** Nothing currently populates `currentPurchasingPower`. A reveal/sum step must exist before `buyCard` is reachable through the engine. See "What Is Not Yet Implemented" in `game-engine/CLAUDE.md`.
+
+---
+
 ## `conflictResolution.ts`
 
 ### `resolveConflictPhase(state: GameState): GameState`

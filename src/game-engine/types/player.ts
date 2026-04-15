@@ -18,5 +18,6 @@ export interface PlayerState {
   agentsTotal: number;
   garrison: number;
   deployedTroops: number;
+  currentPurchasingPower: number;
   deck: DeckState;
 }

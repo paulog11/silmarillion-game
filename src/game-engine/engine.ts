@@ -2,6 +2,7 @@ import { GameState } from './types';
 import { CARD_REGISTRY } from './data/cards';
 import { LOCATION_REGISTRY } from './data/locations';
 import { resolveConflictPhase } from './logic/conflictResolution';
+import { buyCard } from './logic/marketActions';
 
 // ---------------------------------------------------------------------------
 // GameAction — discriminated union of all user intents
@@ -10,7 +11,8 @@ import { resolveConflictPhase } from './logic/conflictResolution';
 export type GameAction =
   | { type: 'PLAY_AGENT'; playerId: string; locationId: string; cardId: string }
   | { type: 'PASS_TURN'; playerId: string }
-  | { type: 'RESOLVE_CONFLICT' };
+  | { type: 'RESOLVE_CONFLICT' }
+  | { type: 'BUY_CARD'; playerId: string; cardId: string; isReserve: boolean };
 
 // ---------------------------------------------------------------------------
 // GameEngine
@@ -50,6 +52,9 @@ export class GameEngine {
 
       case 'RESOLVE_CONFLICT':
         return resolveConflictPhase(state);
+
+      case 'BUY_CARD':
+        return buyCard(state, action.playerId, action.cardId, action.isReserve);
 
       default: {
         // Exhaustiveness guard — TypeScript will error here if a case is missing
@@ -98,10 +103,10 @@ export class GameEngine {
     // --- Location registry validation (icon + cost) ---
     const locationDef = LOCATION_REGISTRY[locationId];
     if (locationDef) {
-      if (cardDef.icon !== locationDef.requiredIcon) {
+      if (!cardDef.agentIcons.includes(locationDef.requiredIcon)) {
         throw new Error(
           `PLAY_AGENT: location "${locationId}" requires a ${locationDef.requiredIcon} card, ` +
-          `but "${cardId}" is ${cardDef.icon}.`
+          `but "${cardId}" has icons [${cardDef.agentIcons.join(', ')}].`
         );
       }
 
@@ -146,7 +151,7 @@ export class GameEngine {
       },
       history: [
         ...state.history,
-        `[Round ${state.round}] Player "${playerId}" played "${cardDef.name}" to ${locationDef?.name ?? locationId}.`,
+        `[Round ${state.round}] Player "${playerId}" played "${cardDef.title}" to ${locationDef?.name ?? locationId}.`,
       ],
     };
   }

@@ -2,6 +2,10 @@ import { defineStore } from 'pinia';
 import { markRaw, ref } from 'vue';
 import { GameEngine, GameAction } from '../game-engine/engine';
 import { GameState, AutomataCard, PlayerState, AutomataState } from '../game-engine/types';
+import { buildConflictDeck } from '../game-engine/data/conflictDeck';
+import { MARKET_CARD_IDS } from '../game-engine/data/marketDeck';
+import { STARTER_DECK_IDS } from '../game-engine/data/starterDeck';
+import { shuffle } from '../game-engine/logic/deckManager';
 
 // ---------------------------------------------------------------------------
 // Mock setup helpers
@@ -18,7 +22,7 @@ const MOCK_AUTOMATA_DECK: AutomataCard[] = [
   {
     id: 'ac-shadow-spread',
     title: 'Shadow of Angband',
-    locationPriorities: ['dorthonion', 'west-beleriand', 'himring'],
+    locationPriorities: ['dorthonion', 'west_beleriand', 'himring'],
     troopsMustered: 2,
   },
   {
@@ -31,6 +35,15 @@ const MOCK_AUTOMATA_DECK: AutomataCard[] = [
 ];
 
 function buildInitialState(): GameState {
+  // --- Human player deck ---
+  const shuffledStarter = shuffle(STARTER_DECK_IDS);
+  const humanDeck = {
+    hand: shuffledStarter.slice(0, 5),
+    drawPile: shuffledStarter.slice(5),
+    discardPile: [] as string[],
+    inPlay: [] as string[],
+  };
+
   const humanPlayer: PlayerState = {
     id: 'player-noldor',
     isAutomata: false,
@@ -42,12 +55,8 @@ function buildInitialState(): GameState {
     agentsTotal: 3,
     garrison: 2,
     deployedTroops: 0,
-    deck: {
-      drawPile: ['card-noldor-vanguard', 'card-lore-of-aman', 'card-cirdan-fleet'],
-      hand: ['card-placeholder', 'card-house-of-fingolfin', 'card-edain-warrior'],
-      discardPile: [],
-      inPlay: [],
-    },
+    currentPurchasingPower: 0,
+    deck: humanDeck,
   };
 
   const morgothPlayer: PlayerState = {
@@ -61,9 +70,11 @@ function buildInitialState(): GameState {
     agentsTotal: 0,
     garrison: 5,
     deployedTroops: 0,
+    currentPurchasingPower: 0,
     deck: { drawPile: [], hand: [], discardPile: [], inPlay: [] },
   };
 
+  // --- Automata state ---
   const automata: AutomataState = {
     deck: [...MOCK_AUTOMATA_DECK],
     discard: [],
@@ -71,6 +82,14 @@ function buildInitialState(): GameState {
     garrison: morgothPlayer.garrison,
     deployedTroops: morgothPlayer.deployedTroops,
   };
+
+  // --- Market ---
+  const marketDeckIds = shuffle(MARKET_CARD_IDS);
+  const visibleCards = marketDeckIds.slice(0, 5);
+  const marketDrawPile = marketDeckIds.slice(5);
+
+  // --- Conflict deck ---
+  const conflictDeck = buildConflictDeck();
 
   return {
     round: 1,
@@ -81,15 +100,20 @@ function buildInitialState(): GameState {
       [morgothPlayer.id]: morgothPlayer,
     },
     locations: {
+      barad_eithel: { id: 'barad_eithel', occupantId: null },
       himring: { id: 'himring', occupantId: null },
       dorthonion: { id: 'dorthonion', occupantId: null },
       gondolin: { id: 'gondolin', occupantId: null },
       nargothrond: { id: 'nargothrond', occupantId: null },
       doriath: { id: 'doriath', occupantId: null },
-      'west-beleriand': { id: 'west-beleriand', occupantId: null },
+      the_havens: { id: 'the_havens', occupantId: null },
+      west_beleriand: { id: 'west_beleriand', occupantId: null },
+      angband_gates: { id: 'angband_gates', occupantId: null },
     },
     automata,
     conflict: null,
+    conflictDeck,
+    market: { visibleCards, deck: marketDrawPile },
     history: ['[Round 1] Game started. The Noldor stand against the Shadow.'],
   };
 }

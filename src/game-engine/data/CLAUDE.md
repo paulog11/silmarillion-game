@@ -35,32 +35,35 @@ The engine's `PLAY_AGENT` handler looks up `LOCATION_REGISTRY[locationId]` to va
 
 ## `cards.ts`
 
+`CARD_REGISTRY` is the **single source of truth** for every card in the game — starter, market, and reserve. No separate per-pool registries. Each pool file (`starterDeck.ts`, `marketDeck.ts`) just exports an array of ID strings into this one registry.
+
 ### `CardDefinition`
 ```
-id    string
-name  string
-icon  LocationIconType    Single icon — used by engine for PLAY_AGENT icon validation
+id               string
+title            string
+agentIcons       LocationIconType[]    All icon types this card satisfies
+purchasingPower  number                Contribution to buy-phase spending power
+cost             number                Price to buy from market. 0 for starter cards.
+troopsMustered   number                Troops gained when played / revealed. 0 if none.
 ```
 
-> **Type divergence:** `CardDefinition` uses a single `icon`, while `StarterCard` in `starterDeck.ts` uses `agentIcons: LocationIconType[]` (multi-icon). When unifying, update `CardDefinition` to `agentIcons[]`, update `CARD_REGISTRY` entries, and change the engine icon check from `===` to `.includes()`.
+The engine's `PLAY_AGENT` handler checks `cardDef.agentIcons.includes(locationDef.requiredIcon)` — multi-icon cards satisfy any of their listed icon types.
 
-### `CARD_REGISTRY: Record<string, CardDefinition>`
+### `CARD_REGISTRY: Record<string, CardDefinition>` — 17 cards
 
-10 named cards covering all five icon types, plus `card-placeholder` (Military) for dev/test use. Add an entry here for every new card introduced.
+- **10 starter cards** (ids prefixed `starter-*`) — the human's starting deck. `cost: 0`.
+- **5 market cards** (Fëanorian Vanguard, Song of Power, Dwarven Smiths, Eagle Scout, The Helm of Hador) — purchasable.
+- **2 reserve cards** (Wandering Minstrel, Sindarin Archer) — always available to buy.
+
+Add an entry here for every new card introduced, then add its ID to the appropriate pool file.
 
 ---
 
 ## `starterDeck.ts`
 
-### `StarterCard`
-```
-id               string
-title            string
-agentIcons       LocationIconType[]    All icon types this card satisfies
-purchasingPower  number                Spending power in the buy phase
-```
+### `STARTER_DECK_IDS: string[]` — 10 cards
 
-### `STARTER_DECK: StarterCard[]` — 10 cards
+Hardcoded ordered list of IDs used by `useGameStore.initGame()` to seed the human player's `DeckState`. Card details come from `CARD_REGISTRY`. Duplicate titles use suffixed IDs (e.g. `starter-sindarin-militia-1` through `-4`) so each physical card is individually addressable.
 
 | Title | Copies | Icons | Power |
 |---|---|---|---|
@@ -70,9 +73,17 @@ purchasingPower  number                Spending power in the buy phase
 | Call to Arms | 1 | Noble, Trade, Wilderness | 0 |
 | Hidden Paths | 1 | Lore | 1 |
 
-### `STARTER_DECK_IDS: string[]`
+---
 
-Derived constant — just `STARTER_DECK.map(c => c.id)`. Use this to seed `DeckState.drawPile` at game init so you don't need to import the full card objects.
+## `marketDeck.ts`
+
+### `MARKET_CARD_IDS: string[]` — 5 cards
+
+Shuffled at game start; first 5 drawn into `market.visibleCards`, remainder becomes `market.deck`. Refilled via `refillMarket()` after each purchase.
+
+### `RESERVE_CARD_IDS: string[]` — 2 cards
+
+Always-available fallback pool. Never removed from offer; not affected by market refill. Pass `isReserve: true` to `buyCard()` to purchase from this pool.
 
 ---
 

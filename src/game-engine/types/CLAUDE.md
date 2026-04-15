@@ -14,7 +14,7 @@ All types are exported from `index.ts` (barrel). Import from `'../types'` or `'.
 | `Phase` | `'planning'` · `'action'` · `'conflict'` · `'cleanup'` |
 | `LocationIconType` | `'Noble'` · `'Military'` · `'Lore'` · `'Trade'` · `'Wilderness'` |
 
-`LocationIconType` is shared between `data/locations.ts` (location `requiredIcon`) and `data/cards.ts` / `data/starterDeck.ts` (card icons). Always import from primitives, never redefine locally.
+`LocationIconType` is shared between `data/locations.ts` (location `requiredIcon`) and `data/cards.ts` (card `agentIcons`). Always import from primitives, never redefine locally.
 
 ---
 
@@ -31,17 +31,18 @@ All fields are arrays of card ID strings. Card objects live in `data/`.
 
 ### `PlayerState`
 ```
-id                string
-isAutomata        boolean              true for Morgoth
-faction           FactionId
-resources         Record<ResourceId, number>
-influence         Record<InfluenceTrackId, number>
-victoryPoints     number
-agentsAvailable   number               decremented on PLAY_AGENT
-agentsTotal       number               constant; used for cleanup reset
-garrison          number               troops held in reserve
-deployedTroops    number               troops committed to conflict; reset to 0 after resolution
-deck              DeckState
+id                      string
+isAutomata              boolean              true for Morgoth
+faction                 FactionId
+resources               Record<ResourceId, number>
+influence               Record<InfluenceTrackId, number>
+victoryPoints           number
+agentsAvailable         number               decremented on PLAY_AGENT
+agentsTotal             number               constant; used for cleanup reset
+garrison                number               troops held in reserve
+deployedTroops          number               troops committed to conflict; reset to 0 after resolution
+currentPurchasingPower  number               spending power available this turn; consumed by BUY_CARD
+deck                    DeckState
 ```
 
 Morgoth's `deck` is always empty (`{ drawPile:[], hand:[], discardPile:[], inPlay:[] }`). His card draw is managed via `AutomataState` in `GameState`.
@@ -64,6 +65,14 @@ rewards           string[]                     Legacy field; typed rewards live 
 playerStrengths   Record<string, number>       Snapshot of deployedTroops at conflict start
 isResolved        boolean
 ```
+
+### `MarketState`
+```
+visibleCards      string[]                     Card IDs currently face-up and buyable. Refilled to 5 after each purchase.
+deck              string[]                     Remaining card IDs in the market draw pile.
+```
+
+`buyCard()` removes the purchased ID from `visibleCards` (for market purchases — reserve buys don't touch it), then `refillMarket()` pulls from `deck` until `visibleCards.length === 5` or the deck is exhausted.
 
 ---
 
@@ -102,7 +111,11 @@ players           Record<string, PlayerState>
 locations         Record<string, LocationState>
 automata          AutomataState
 conflict          ConflictState | null            null = no active conflict
+conflictDeck      ConflictCard[]                  Remaining conflict cards for future rounds
+market            MarketState                     Buy-phase card offer + draw pile
 history           string[]                        Append-only event log
 ```
 
 `conflict` is `null` outside the conflict phase. Set it to a `ConflictState` object to initiate a battle; `resolveConflictPhase()` will mark `isResolved: true` and reset `deployedTroops`.
+
+`conflictDeck` is built once at init via `buildConflictDeck()` (tier-sorted, tier-shuffled). Nothing yet pops from it to start the next conflict — that's an unimplemented seam.

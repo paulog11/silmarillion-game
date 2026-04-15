@@ -12,3 +12,10 @@ export interface ConflictState {
   playerStrengths: Record<string, number>;
   isResolved: boolean;
 }
+
+export interface MarketState {
+  /** Card IDs currently face-up and available for purchase. Refilled to 5 after each buy. */
+  visibleCards: string[];
+  /** Remaining card IDs in the market draw pile. */
+  deck: string[];
+}
