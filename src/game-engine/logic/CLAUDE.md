@@ -24,7 +24,7 @@ Draws up to `count` cards from `drawPile` into `hand`.
 
 ### `applyLocationReward(state: GameState, playerId: string, locationId: string): GameState`
 
-Called during the **action phase** after an agent has been placed. Switch over `locationId`:
+Called at the end of `PLAY_AGENT` (inside `handlePlayAgent`) immediately after placement. When a proper action phase is introduced, this call moves there. Switch over `locationId`:
 
 | locationId | Condition | Effect |
 |---|---|---|
@@ -62,7 +62,7 @@ Called by the engine `BUY_CARD` action. Pure — returns a new `GameState`.
 
 `refillMarket()` is a private helper inside this file — no other caller needs it.
 
-**Note:** Nothing currently populates `currentPurchasingPower`. A reveal/sum step must exist before `buyCard` is reachable through the engine. See "What Is Not Yet Implemented" in `game-engine/CLAUDE.md`.
+**Note:** `currentPurchasingPower` is populated by the `REVEAL_CARDS_FOR_PURCHASE` engine action, which must be dispatched before `BUY_CARD`. That action sums `CardDefinition.purchasingPower` across all cards in the player's hand and writes the total to `PlayerState.currentPurchasingPower`.
 
 ---
 

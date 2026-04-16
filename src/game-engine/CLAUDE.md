@@ -29,9 +29,10 @@ After reduction the engine deep-clones state (`JSON.parse/JSON.stringify`) befor
 
 | Action | Payload | Description |
 |---|---|---|
-| `PLAY_AGENT` | `playerId, locationId, cardId` | Place an agent; validates `agentIcons.includes(requiredIcon)`, cost, hand, and occupancy |
+| `PLAY_AGENT` | `playerId, locationId, cardId` | Place an agent; validates `agentIcons.includes(requiredIcon)`, cost, hand, and occupancy; immediately applies the location reward via `applyLocationReward()` |
 | `PASS_TURN` | `playerId` | Log a pass; no state change beyond history |
 | `RESOLVE_CONFLICT` | _(none)_ | Delegate to `resolveConflictPhase()` |
+| `REVEAL_CARDS_FOR_PURCHASE` | `playerId` | Sums `purchasingPower` across all cards in the player's hand and sets `currentPurchasingPower`. Must be dispatched before `BUY_CARD`. |
 | `BUY_CARD` | `playerId, cardId, isReserve` | Delegate to `buyCard()` — purchase a market or reserve card; deducts `currentPurchasingPower`, adds card to discardPile, refills market row |
 
 ### Adding a new action
@@ -82,6 +83,6 @@ Phase advancement is not yet implemented — `GameState.phase` must be set manua
 | `AUTOMATA_TURN` action | `engine.ts` + `automataLogic.ts` |
 | Card special effects | `data/cards.ts` `specialEffect` field; handler in `logic/` |
 | Influence track unlock effects | `logic/` — new `influenceEffects.ts` |
-| Resource collection from locations | `logic/locationActions.ts` or new action |
 | Victory condition check | `logic/` — new `victoryCheck.ts` |
 | Cleanup phase logic | `logic/` — new `cleanupPhase.ts` |
+| Move reward to action phase | `applyLocationReward()` is currently called at end of `PLAY_AGENT`; relocate the call when `ADVANCE_PHASE` is implemented |

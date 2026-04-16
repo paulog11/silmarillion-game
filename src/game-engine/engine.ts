@@ -2,6 +2,7 @@ import { GameState } from './types';
 import { CARD_REGISTRY } from './data/cards';
 import { LOCATION_REGISTRY } from './data/locations';
 import { resolveConflictPhase } from './logic/conflictResolution';
+import { applyLocationReward } from './logic/locationActions';
 import { buyCard } from './logic/marketActions';
 
 // ---------------------------------------------------------------------------
@@ -12,6 +13,7 @@ export type GameAction =
   | { type: 'PLAY_AGENT'; playerId: string; locationId: string; cardId: string }
   | { type: 'PASS_TURN'; playerId: string }
   | { type: 'RESOLVE_CONFLICT' }
+  | { type: 'REVEAL_CARDS_FOR_PURCHASE'; playerId: string }
   | { type: 'BUY_CARD'; playerId: string; cardId: string; isReserve: boolean };
 
 // ---------------------------------------------------------------------------
@@ -52,6 +54,9 @@ export class GameEngine {
 
       case 'RESOLVE_CONFLICT':
         return resolveConflictPhase(state);
+
+      case 'REVEAL_CARDS_FOR_PURCHASE':
+        return this.handleRevealCardsForPurchase(state, action.playerId);
 
       case 'BUY_CARD':
         return buyCard(state, action.playerId, action.cardId, action.isReserve);
@@ -125,7 +130,7 @@ export class GameEngine {
     const costResource = locationDef?.cost?.resource;
     const costAmount = locationDef?.cost?.amount ?? 0;
 
-    return {
+    const afterPlacement: GameState = {
       ...state,
       players: {
         ...state.players,
@@ -152,6 +157,37 @@ export class GameEngine {
       history: [
         ...state.history,
         `[Round ${state.round}] Player "${playerId}" played "${cardDef.title}" to ${locationDef?.name ?? locationId}.`,
+      ],
+    };
+
+    // Apply the location's reward immediately after placement.
+    // When a proper action phase is implemented this call moves there.
+    return applyLocationReward(afterPlacement, playerId, locationId);
+  }
+
+  private handleRevealCardsForPurchase(state: GameState, playerId: string): GameState {
+    const player = state.players[playerId];
+    if (!player) {
+      throw new Error(`REVEAL_CARDS_FOR_PURCHASE: player "${playerId}" not found.`);
+    }
+
+    const purchasingPower = player.deck.hand.reduce((sum, cardId) => {
+      const cardDef = CARD_REGISTRY[cardId];
+      return sum + (cardDef?.purchasingPower ?? 0);
+    }, 0);
+
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [playerId]: {
+          ...player,
+          currentPurchasingPower: purchasingPower,
+        },
+      },
+      history: [
+        ...state.history,
+        `[Round ${state.round}] Player "${playerId}" revealed hand for purchase: ${purchasingPower} purchasing power.`,
       ],
     };
   }
