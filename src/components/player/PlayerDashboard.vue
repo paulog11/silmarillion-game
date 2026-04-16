@@ -52,7 +52,7 @@ function revealHand(): void {
     </section>
 
     <!-- Center: Hand -->
-    <section class="dashboard-section hand-section">
+    <section class="dashboard-section hand-section" data-tutorial="hand-section">
       <h3 class="section-label">Hand ({{ handCards.length }})</h3>
       <div class="hand-cards">
         <PlayingCard
@@ -84,7 +84,7 @@ function revealHand(): void {
       <div v-if="humanPlayer.currentPurchasingPower > 0" class="purchasing-power">
         Buying power: <strong>{{ humanPlayer.currentPurchasingPower }}</strong>
       </div>
-      <button class="reveal-btn" @click="revealHand">
+      <button class="reveal-btn" data-tutorial="reveal-btn" @click="revealHand">
         Reveal Hand for Purchase
       </button>
     </section>

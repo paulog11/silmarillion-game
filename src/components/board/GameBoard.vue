@@ -57,7 +57,7 @@ function handleLocationClick(locationId: string): void {
 <template>
   <div class="game-board">
     <!-- Card selector -->
-    <div class="card-selector">
+    <div class="card-selector" data-tutorial="card-selector">
       <span class="selector-label">Play card:</span>
       <div class="selector-cards">
         <button
@@ -77,7 +77,7 @@ function handleLocationClick(locationId: string): void {
     </div>
 
     <!-- Location grid -->
-    <div class="locations-grid">
+    <div class="locations-grid" data-tutorial="locations-grid">
       <LocationSpace
         v-for="def in locations"
         :key="def.id"

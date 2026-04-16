@@ -30,10 +30,10 @@ function buy(cardId: string, isReserve: boolean): void {
 </script>
 
 <template>
-  <div class="market-row">
+  <div class="market-row" data-tutorial="market-section">
     <div class="market-group">
       <h3 class="market-label">Market</h3>
-      <div class="card-row">
+      <div class="card-row" data-tutorial="market-cards">
         <PlayingCard
           v-for="card in visibleCards"
           :key="card.id"

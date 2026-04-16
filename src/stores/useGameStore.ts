@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { markRaw, ref } from 'vue';
+import { useTutorialStore } from './useTutorialStore';
 import { GameEngine, GameAction } from '../game-engine/engine';
 import { GameState, AutomataCard, PlayerState, AutomataState } from '../game-engine/types';
 import { buildConflictDeck } from '../game-engine/data/conflictDeck';
@@ -150,6 +151,7 @@ export const useGameStore = defineStore('game', () => {
       throw new Error('sendAction: engine is not initialised. Call initGame() first.');
     }
     engine.value.dispatch(action);
+    useTutorialStore().notifyAction(action.type);
   }
 
   // Used by automata turns that run outside the engine's dispatch cycle.
