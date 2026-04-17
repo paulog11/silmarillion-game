@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { nextTick, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useGameStore } from './stores/useGameStore';
 import { useTutorialStore } from './stores/useTutorialStore';
 import AutomataPanel from './components/automata/AutomataPanel.vue';
 import ConflictZone from './components/board/ConflictZone.vue';
 import GameBoard from './components/board/GameBoard.vue';
+import GameGuide from './components/ui/GameGuide.vue';
 import MarketRow from './components/board/MarketRow.vue';
 import PlayerDashboard from './components/player/PlayerDashboard.vue';
 import TutorialOverlay from './components/ui/TutorialOverlay.vue';
 
 const store = useGameStore();
 const tutorial = useTutorialStore();
+const guideOpen = ref(false);
 
 onMounted(() => {
   store.initGame();
-  if (!localStorage.getItem('tutorialCompleted')) {
-    nextTick(() => tutorial.startTutorial());
-  }
 });
 </script>
 
@@ -25,11 +24,17 @@ onMounted(() => {
     <!-- Tutorial overlay (Teleports to body, sits above everything) -->
     <TutorialOverlay />
 
+    <!-- Game guide dialog (Teleports to body) -->
+    <GameGuide :open="guideOpen" @close="guideOpen = false" />
+
     <!-- Header: Morgoth status + active conflict -->
     <header class="app-header">
       <AutomataPanel />
       <ConflictZone />
-      <button class="tutorial-help-btn" title="Replay tutorial" @click="tutorial.startTutorial()">?</button>
+      <div class="header-btns">
+        <button class="tutorial-help-btn" title="Game Guide" @click="guideOpen = true">📖</button>
+        <button class="tutorial-help-btn" title="Replay tutorial" @click="tutorial.startTutorial()">?</button>
+      </div>
     </header>
 
     <!-- Body: board left, market right -->
@@ -121,10 +126,17 @@ body {
   overflow-y: auto;
 }
 
-/* Tutorial help button */
-.tutorial-help-btn {
+/* Header action buttons */
+.header-btns {
   margin-left: auto;
   align-self: flex-start;
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Tutorial help button */
+.tutorial-help-btn {
   width: 28px;
   height: 28px;
   border-radius: 50%;
