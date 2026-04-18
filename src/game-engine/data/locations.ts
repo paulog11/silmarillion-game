@@ -6,6 +6,7 @@ export interface LocationDefinition {
   requiredIcon: LocationIconType;
   cost: { resource: ResourceId; amount: number } | null;
   isNeighborToMorgoth: boolean;
+  rewardText: string;
 }
 
 export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
@@ -15,6 +16,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Military',
     cost: { resource: 'supplies', amount: 1 },
     isNeighborToMorgoth: true,
+    rewardText: '+2 garrison, +1 valor',
   },
   gondolin: {
     id: 'gondolin',
@@ -22,6 +24,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Noble',
     cost: { resource: 'lore', amount: 2 },
     isNeighborToMorgoth: false,
+    rewardText: 'Spend 2 lore → draw 2 cards',
   },
   himring: {
     id: 'himring',
@@ -29,6 +32,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Military',
     cost: { resource: 'supplies', amount: 1 },
     isNeighborToMorgoth: true,
+    rewardText: '+1 garrison, +1 Fëanor influence',
   },
   the_havens: {
     id: 'the_havens',
@@ -36,6 +40,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Trade',
     cost: null,
     isNeighborToMorgoth: false,
+    rewardText: 'Spend 1 valor → +3 supplies',
   },
   angband_gates: {
     id: 'angband_gates',
@@ -43,6 +48,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Military',
     cost: { resource: 'valor', amount: 2 },
     isNeighborToMorgoth: true,
+    rewardText: 'All garrison → deployed troops',
   },
   dorthonion: {
     id: 'dorthonion',
@@ -50,6 +56,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Wilderness',
     cost: { resource: 'supplies', amount: 1 },
     isNeighborToMorgoth: true,
+    rewardText: 'No reward',
   },
   nargothrond: {
     id: 'nargothrond',
@@ -57,6 +64,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Lore',
     cost: { resource: 'lore', amount: 1 },
     isNeighborToMorgoth: false,
+    rewardText: 'No reward',
   },
   doriath: {
     id: 'doriath',
@@ -64,6 +72,7 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Noble',
     cost: null,
     isNeighborToMorgoth: false,
+    rewardText: 'No reward',
   },
   west_beleriand: {
     id: 'west_beleriand',
@@ -71,5 +80,6 @@ export const LOCATION_REGISTRY: Record<string, LocationDefinition> = {
     requiredIcon: 'Wilderness',
     cost: null,
     isNeighborToMorgoth: false,
+    rewardText: 'No reward',
   },
 };

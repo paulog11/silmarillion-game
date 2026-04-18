@@ -116,6 +116,6 @@ market            MarketState                     Buy-phase card offer + draw pi
 history           string[]                        Append-only event log
 ```
 
-`conflict` is `null` outside the conflict phase. Set it to a `ConflictState` object to initiate a battle; `resolveConflictPhase()` will mark `isResolved: true` and reset `deployedTroops`.
+`conflict` is populated at game init: `buildInitialState()` pops the top card from `conflictDeck` and sets a `ConflictState` with `isResolved: false`. After `RESOLVE_CONFLICT` is dispatched, `resolveConflictPhase()` marks it `isResolved: true` and resets `deployedTroops`. Advancing to the next conflict (popping another card) is not yet automated — that's part of the unimplemented cleanup phase.
 
-`conflictDeck` is built once at init via `buildConflictDeck()` (tier-sorted, tier-shuffled). Nothing yet pops from it to start the next conflict — that's an unimplemented seam.
+`conflictDeck` is built once at init via `buildConflictDeck()` (tier-sorted, tier-shuffled). The first card is popped immediately to seed `conflict`; the rest remain for future rounds.

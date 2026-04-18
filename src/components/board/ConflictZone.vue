@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useGameStore } from '../../stores/useGameStore';
-import { CONFLICT_DECK } from '../../game-engine/data/conflictDeck';
+import { CONFLICT_DECK, MorgothPenalty } from '../../game-engine/data/conflictDeck';
 
 const store = useGameStore();
 
@@ -13,11 +13,18 @@ const conflictCard = computed(() => {
   return CONFLICT_DECK.find((c) => c.id === id) ?? null;
 });
 
+const humanPlayer = computed(() => {
+  const state = store.gameState;
+  if (!state) return null;
+  return Object.values(state.players).find((p) => !p.isAutomata) ?? null;
+});
+
 interface Side {
   label: string;
   playerId: string;
   troops: number;
   isWinning: boolean;
+  isHuman: boolean;
 }
 
 const sides = computed((): Side[] => {
@@ -38,12 +45,14 @@ const sides = computed((): Side[] => {
       playerId: human.id,
       troops: humanTroops,
       isWinning: humanTroops > morgothTroops,
+      isHuman: true,
     },
     {
       label: 'Morgoth',
       playerId: morgoth.id,
       troops: morgothTroops,
       isWinning: morgothTroops > humanTroops,
+      isHuman: false,
     },
   ];
 });
@@ -57,6 +66,24 @@ const isTied = computed(() => {
   const [a, b] = sides.value;
   return a && b && a.troops === b.troops && a.troops > 0;
 });
+
+function penaltyLabel(penalty: MorgothPenalty): string {
+  switch (penalty.type) {
+    case 'lose_vp': return `−${penalty.amount} VP`;
+    case 'lose_resource': return `−${penalty.amount} ${penalty.resourceId}`;
+    case 'morgoth_garrison': return `Morgoth +${penalty.amount} garrison`;
+  }
+}
+
+function deployTroops(amount: number): void {
+  const player = humanPlayer.value;
+  if (!player) return;
+  store.sendAction({ type: 'DEPLOY_TROOPS', playerId: player.id, amount });
+}
+
+function resolveConflict(): void {
+  store.sendAction({ type: 'RESOLVE_CONFLICT' });
+}
 </script>
 
 <template>
@@ -66,6 +93,13 @@ const isTied = computed(() => {
         <span class="tier-badge">{{ tierLabel }}</span>
         <h2 class="conflict-title">{{ conflictCard.title }}</h2>
         <span v-if="conflict.isResolved" class="resolved-badge">Resolved</span>
+        <button
+          v-else
+          class="resolve-btn"
+          @click="resolveConflict"
+        >
+          Resolve
+        </button>
       </div>
 
       <div class="strength-row">
@@ -75,7 +109,7 @@ const isTied = computed(() => {
           class="strength-card"
           :class="{
             winning: side.isWinning && !isTied,
-            morgoth: side.playerId === sides[1]?.playerId,
+            morgoth: !side.isHuman,
           }"
         >
           <span class="side-label">{{ side.label }}</span>
@@ -83,6 +117,22 @@ const isTied = computed(() => {
           <span class="troops-unit">troops</span>
           <span v-if="side.isWinning && !isTied" class="winning-indicator">▲ Leading</span>
           <span v-else-if="isTied" class="tied-indicator">— Tied</span>
+
+          <template v-if="side.isHuman && !conflict.isResolved && humanPlayer">
+            <span class="garrison-label">Garrison: {{ humanPlayer.garrison }}</span>
+            <div class="deploy-btns">
+              <button
+                class="deploy-btn"
+                :disabled="humanPlayer.garrison < 1"
+                @click="deployTroops(1)"
+              >+1</button>
+              <button
+                class="deploy-btn deploy-btn-all"
+                :disabled="humanPlayer.garrison === 0"
+                @click="deployTroops(humanPlayer.garrison)"
+              >All</button>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -103,6 +153,17 @@ const isTied = computed(() => {
           class="reward-chip"
         >
           {{ reward.type === 'victoryPoints' ? `${reward.amount} VP` : `${reward.amount} ${reward.resourceId}` }}
+        </span>
+      </div>
+
+      <div class="penalty-hint">
+        <span class="penalty-label">If Morgoth wins:</span>
+        <span
+          v-for="(penalty, i) in conflictCard.morgothPenalty"
+          :key="i"
+          class="penalty-chip"
+        >
+          {{ penaltyLabel(penalty) }}
         </span>
       </div>
     </template>
@@ -165,6 +226,26 @@ const isTied = computed(() => {
   border-radius: 4px;
   padding: 2px 6px;
   font-weight: 600;
+}
+
+.resolve-btn {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #3a2010;
+  border: 1px solid #8a5a2a;
+  color: #e8b87a;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.resolve-btn:hover {
+  background: #5a3a18;
+  border-color: #d4ac0d;
+  color: #d4ac0d;
 }
 
 /* Strength row */
@@ -234,6 +315,44 @@ const isTied = computed(() => {
   color: #8a7a6a;
 }
 
+.garrison-label {
+  font-size: 0.6rem;
+  color: #8a7a6a;
+  margin-top: 6px;
+}
+
+.deploy-btns {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.deploy-btn {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #4a6a3a;
+  background: #1a2a14;
+  color: #8aca6a;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.deploy-btn:hover:not(:disabled) {
+  background: #2a4020;
+  border-color: #8aca6a;
+}
+
+.deploy-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.deploy-btn-all {
+  border-color: #3a5a2a;
+}
+
 /* Rewards hint */
 .rewards-hint {
   display: flex;
@@ -259,6 +378,28 @@ const isTied = computed(() => {
   border-radius: 4px;
   padding: 1px 6px;
   color: #c8b898;
+}
+
+/* Penalty hint */
+.penalty-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+}
+
+.penalty-label {
+  color: #8a5a5a;
+  font-weight: 600;
+}
+
+.penalty-chip {
+  background: #2a1414;
+  border: 1px solid #5a2a2a;
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: #c87878;
 }
 
 /* No-conflict state */

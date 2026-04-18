@@ -13,6 +13,7 @@ export type GameAction =
   | { type: 'PLAY_AGENT'; playerId: string; locationId: string; cardId: string }
   | { type: 'PASS_TURN'; playerId: string }
   | { type: 'RESOLVE_CONFLICT' }
+  | { type: 'DEPLOY_TROOPS'; playerId: string; amount: number }
   | { type: 'REVEAL_CARDS_FOR_PURCHASE'; playerId: string }
   | { type: 'BUY_CARD'; playerId: string; cardId: string; isReserve: boolean };
 
@@ -54,6 +55,9 @@ export class GameEngine {
 
       case 'RESOLVE_CONFLICT':
         return resolveConflictPhase(state);
+
+      case 'DEPLOY_TROOPS':
+        return this.handleDeployTroops(state, action);
 
       case 'REVEAL_CARDS_FOR_PURCHASE':
         return this.handleRevealCardsForPurchase(state, action.playerId);
@@ -163,6 +167,45 @@ export class GameEngine {
     // Apply the location's reward immediately after placement.
     // When a proper action phase is implemented this call moves there.
     return applyLocationReward(afterPlacement, playerId, locationId);
+  }
+
+  private handleDeployTroops(
+    state: GameState,
+    action: Extract<GameAction, { type: 'DEPLOY_TROOPS' }>
+  ): GameState {
+    const { playerId, amount } = action;
+
+    const player = state.players[playerId];
+    if (!player) {
+      throw new Error(`DEPLOY_TROOPS: player "${playerId}" not found.`);
+    }
+    if (amount <= 0) {
+      throw new Error(`DEPLOY_TROOPS: amount must be greater than 0.`);
+    }
+    if (player.garrison < amount) {
+      throw new Error(
+        `DEPLOY_TROOPS: player "${playerId}" only has ${player.garrison} garrison but tried to deploy ${amount}.`
+      );
+    }
+    if (!state.conflict || state.conflict.isResolved) {
+      throw new Error(`DEPLOY_TROOPS: no active unresolved conflict.`);
+    }
+
+    return {
+      ...state,
+      players: {
+        ...state.players,
+        [playerId]: {
+          ...player,
+          garrison: player.garrison - amount,
+          deployedTroops: player.deployedTroops + amount,
+        },
+      },
+      history: [
+        ...state.history,
+        `[Round ${state.round}] Player "${playerId}" deployed ${amount} troop(s) to the conflict.`,
+      ],
+    };
   }
 
   private handleRevealCardsForPurchase(state: GameState, playerId: string): GameState {

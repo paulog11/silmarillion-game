@@ -90,7 +90,7 @@ function buildInitialState(): GameState {
   const marketDrawPile = marketDeckIds.slice(5);
 
   // --- Conflict deck ---
-  const conflictDeck = buildConflictDeck();
+  const [firstConflict, ...remainingConflicts] = buildConflictDeck();
 
   return {
     round: 1,
@@ -112,8 +112,18 @@ function buildInitialState(): GameState {
       angband_gates: { id: 'angband_gates', occupantId: null },
     },
     automata,
-    conflict: null,
-    conflictDeck,
+    conflict: firstConflict
+      ? {
+          conflictCardId: firstConflict.id,
+          rewards: [],
+          playerStrengths: {
+            [humanPlayer.id]: 0,
+            [morgothPlayer.id]: 0,
+          },
+          isResolved: false,
+        }
+      : null,
+    conflictDeck: remainingConflicts,
     market: { visibleCards, deck: marketDrawPile },
     history: ['[Round 1] Game started. The Noldor stand against the Shadow.'],
   };

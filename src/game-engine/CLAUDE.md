@@ -32,6 +32,7 @@ After reduction the engine deep-clones state (`JSON.parse/JSON.stringify`) befor
 | `PLAY_AGENT` | `playerId, locationId, cardId` | Place an agent; validates `agentIcons.includes(requiredIcon)`, cost, hand, and occupancy; immediately applies the location reward via `applyLocationReward()` |
 | `PASS_TURN` | `playerId` | Log a pass; no state change beyond history |
 | `RESOLVE_CONFLICT` | _(none)_ | Delegate to `resolveConflictPhase()` |
+| `DEPLOY_TROOPS` | `playerId, amount` | Move `amount` troops from `garrison → deployedTroops`. Validates: player exists, `amount > 0`, `garrison >= amount`, active unresolved conflict exists. |
 | `REVEAL_CARDS_FOR_PURCHASE` | `playerId` | Sums `purchasingPower` across all cards in the player's hand and sets `currentPurchasingPower`. Must be dispatched before `BUY_CARD`. |
 | `BUY_CARD` | `playerId, cardId, isReserve` | Delegate to `buyCard()` — purchase a market or reserve card; deducts `currentPurchasingPower`, adds card to discardPile, refills market row |
 
