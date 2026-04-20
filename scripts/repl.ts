@@ -85,6 +85,7 @@ function buildInitialState(): GameState {
     agentsTotal: 3,
     garrison: 2,
     deployedTroops: 0,
+    canDeployTroops: false,
     currentPurchasingPower: 0,
     deck: {
       hand: shuffledStarter.slice(0, 5),
@@ -104,6 +105,7 @@ function buildInitialState(): GameState {
     agentsTotal: 0,
     garrison: 5,
     deployedTroops: 0,
+    canDeployTroops: false,
     currentPurchasingPower: 0,
     deck: { drawPile: [], hand: [], discardPile: [], inPlay: [] },
   };

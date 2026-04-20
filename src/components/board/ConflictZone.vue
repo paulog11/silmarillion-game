@@ -120,18 +120,21 @@ function resolveConflict(): void {
 
           <template v-if="side.isHuman && !conflict.isResolved && humanPlayer">
             <span class="garrison-label">Garrison: {{ humanPlayer.garrison }}</span>
-            <div class="deploy-btns">
-              <button
-                class="deploy-btn"
-                :disabled="humanPlayer.garrison < 1"
-                @click="deployTroops(1)"
-              >+1</button>
-              <button
-                class="deploy-btn deploy-btn-all"
-                :disabled="humanPlayer.garrison === 0"
-                @click="deployTroops(humanPlayer.garrison)"
-              >All</button>
-            </div>
+            <template v-if="humanPlayer.canDeployTroops">
+              <div class="deploy-btns">
+                <button
+                  class="deploy-btn"
+                  :disabled="humanPlayer.garrison < 1"
+                  @click="deployTroops(1)"
+                >+1</button>
+                <button
+                  class="deploy-btn deploy-btn-all"
+                  :disabled="humanPlayer.garrison === 0"
+                  @click="deployTroops(humanPlayer.garrison)"
+                >All</button>
+              </div>
+            </template>
+            <span v-else class="deploy-locked">Deploy locked — place agent at Barad Eithel or Himring</span>
           </template>
         </div>
       </div>
@@ -347,6 +350,14 @@ function resolveConflict(): void {
 .deploy-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.deploy-locked {
+  font-size: 0.58rem;
+  color: #6a5a4a;
+  font-style: italic;
+  margin-top: 4px;
+  text-align: center;
 }
 
 .deploy-btn-all {

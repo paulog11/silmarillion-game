@@ -190,6 +190,9 @@ export class GameEngine {
     if (!state.conflict || state.conflict.isResolved) {
       throw new Error(`DEPLOY_TROOPS: no active unresolved conflict.`);
     }
+    if (!player.canDeployTroops) {
+      throw new Error(`DEPLOY_TROOPS: player "${playerId}" has not unlocked troop deployment.`);
+    }
 
     return {
       ...state,

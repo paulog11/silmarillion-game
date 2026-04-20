@@ -54,14 +54,15 @@ export function applyLocationReward(
   let rewardDescription: string;
 
   switch (locationId) {
-    // +2 garrison, +1 valor
+    // +2 garrison, +1 valor, unlock troop deployment
     case 'barad_eithel': {
       player = {
         ...player,
         garrison: player.garrison + 2,
         resources: { ...player.resources, valor: player.resources.valor + 1 },
+        canDeployTroops: true,
       };
-      rewardDescription = '+2 garrison, +1 valor.';
+      rewardDescription = '+2 garrison, +1 valor, deployment unlocked.';
       break;
     }
 
@@ -80,14 +81,15 @@ export function applyLocationReward(
       break;
     }
 
-    // +1 troop (garrison), increment feanor influence
+    // +1 troop (garrison), increment feanor influence, unlock troop deployment
     case 'himring': {
       player = {
         ...player,
         garrison: player.garrison + 1,
         influence: { ...player.influence, feanor: player.influence.feanor + 1 },
+        canDeployTroops: true,
       };
-      rewardDescription = '+1 garrison, +1 Fëanor influence.';
+      rewardDescription = '+1 garrison, +1 Fëanor influence, deployment unlocked.';
       break;
     }
 
