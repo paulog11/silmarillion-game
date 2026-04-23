@@ -64,7 +64,11 @@ onMounted(() => {
 
 body {
   margin: 0;
-  background: #0e0d0a;
+  background-color: #03020b;
+  background-image: url('/beleriand-bg.svg');
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: fixed;
   color: #e8dcc8;
   font-family: 'Georgia', serif;
 }

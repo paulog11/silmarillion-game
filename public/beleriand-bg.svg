@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- Night sky gradient -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#03020b"/>
+      <stop offset="35%"  stop-color="#060818"/>
+      <stop offset="70%"  stop-color="#090d1e"/>
+      <stop offset="100%" stop-color="#0b0f1c"/>
+    </linearGradient>
+    <!-- Angband fire glow — northwest horizon -->
+    <radialGradient id="angbandGlow" cx="0.08" cy="1.0" r="0.55" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#3d0c04" stop-opacity="0.5"/>
+      <stop offset="60%"  stop-color="#1a0502" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#1a0502" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Cold Varda starlight glow — northeast -->
+    <radialGradient id="starGlow" cx="0.75" cy="0.05" r="0.4" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#a8b8d8" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#a8b8d8" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Valley mist -->
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0%"   stop-color="#0e1828" stop-opacity="0"/>
+      <stop offset="45%"  stop-color="#0e1828" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#0e1828" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base sky -->
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <!-- Angband fire on northwest horizon -->
+  <rect width="1920" height="1080" fill="url(#angbandGlow)"/>
+  <!-- Cold starlight northeast -->
+  <rect width="1920" height="1080" fill="url(#starGlow)"/>
+
+  <!-- Stars — Varda's work -->
+  <g fill="#c4d4ee">
+    <!-- Row 1: y 25–100 -->
+    <circle cx="48"   cy="62"  r="1"   opacity="0.75"/>
+    <circle cx="185"  cy="34"  r="1.5" opacity="0.82"/>
+    <circle cx="298"  cy="88"  r="1"   opacity="0.60"/>
+    <circle cx="425"  cy="41"  r="1.2" opacity="0.78"/>
+    <circle cx="514"  cy="96"  r="0.8" opacity="0.52"/>
+    <circle cx="652"  cy="27"  r="1.3" opacity="0.85"/>
+    <circle cx="744"  cy="74"  r="1"   opacity="0.67"/>
+    <circle cx="884"  cy="44"  r="1.5" opacity="0.72"/>
+    <circle cx="956"  cy="91"  r="0.8" opacity="0.58"/>
+    <circle cx="1084" cy="29"  r="1"   opacity="0.77"/>
+    <circle cx="1175" cy="67"  r="1.2" opacity="0.70"/>
+    <circle cx="1316" cy="51"  r="1"   opacity="0.82"/>
+    <circle cx="1442" cy="22"  r="0.8" opacity="0.52"/>
+    <circle cx="1558" cy="77"  r="1"   opacity="0.70"/>
+    <circle cx="1684" cy="39"  r="1.5" opacity="0.76"/>
+    <circle cx="1786" cy="88"  r="1"   opacity="0.63"/>
+    <circle cx="1884" cy="54"  r="0.8" opacity="0.58"/>
+    <!-- Row 2: y 115–175 -->
+    <circle cx="122"  cy="148" r="0.8" opacity="0.52"/>
+    <circle cx="285"  cy="168" r="1"   opacity="0.66"/>
+    <circle cx="394"  cy="128" r="1.2" opacity="0.72"/>
+    <circle cx="558"  cy="154" r="0.8" opacity="0.56"/>
+    <circle cx="686"  cy="122" r="1"   opacity="0.62"/>
+    <circle cx="824"  cy="172" r="0.8" opacity="0.50"/>
+    <circle cx="944"  cy="138" r="1.5" opacity="0.68"/>
+    <circle cx="1104" cy="124" r="1"   opacity="0.72"/>
+    <circle cx="1256" cy="162" r="0.8" opacity="0.56"/>
+    <circle cx="1364" cy="128" r="1"   opacity="0.62"/>
+    <circle cx="1484" cy="104" r="1.2" opacity="0.72"/>
+    <circle cx="1625" cy="148" r="0.8" opacity="0.50"/>
+    <circle cx="1754" cy="116" r="1"   opacity="0.66"/>
+    <circle cx="1904" cy="168" r="0.8" opacity="0.60"/>
+    <!-- Row 3: y 205–260 -->
+    <circle cx="78"   cy="228" r="0.8" opacity="0.46"/>
+    <circle cx="214"  cy="252" r="1"   opacity="0.60"/>
+    <circle cx="374"  cy="222" r="0.8" opacity="0.50"/>
+    <circle cx="495"  cy="248" r="1"   opacity="0.56"/>
+    <circle cx="635"  cy="212" r="1.2" opacity="0.66"/>
+    <circle cx="795"  cy="242" r="0.8" opacity="0.46"/>
+    <circle cx="914"  cy="218" r="1"   opacity="0.60"/>
+    <circle cx="1055" cy="258" r="0.8" opacity="0.50"/>
+    <circle cx="1195" cy="228" r="1"   opacity="0.56"/>
+    <circle cx="1345" cy="248" r="0.8" opacity="0.46"/>
+    <circle cx="1466" cy="212" r="1.2" opacity="0.62"/>
+    <circle cx="1595" cy="238" r="0.8" opacity="0.50"/>
+    <circle cx="1725" cy="222" r="1"   opacity="0.56"/>
+    <circle cx="1855" cy="252" r="0.8" opacity="0.46"/>
+    <!-- Row 4: y 290–345 (getting close to mountains, fade out) -->
+    <circle cx="155"  cy="312" r="0.8" opacity="0.36"/>
+    <circle cx="344"  cy="334" r="1"   opacity="0.50"/>
+    <circle cx="562"  cy="308" r="0.8" opacity="0.40"/>
+    <circle cx="726"  cy="328" r="0.8" opacity="0.36"/>
+    <circle cx="875"  cy="302" r="1"   opacity="0.46"/>
+    <circle cx="1025" cy="338" r="0.8" opacity="0.36"/>
+    <circle cx="1205" cy="318" r="1"   opacity="0.42"/>
+    <circle cx="1385" cy="296" r="0.8" opacity="0.36"/>
+    <circle cx="1545" cy="324" r="1"   opacity="0.46"/>
+    <circle cx="1705" cy="308" r="0.8" opacity="0.36"/>
+    <circle cx="1885" cy="332" r="0.8" opacity="0.40"/>
+  </g>
+
+  <!-- Moon — Isil, cold and pale, partially veiled -->
+  <circle cx="1448" cy="132" r="50" fill="#131c38" opacity="0.55"/>
+  <circle cx="1448" cy="132" r="38" fill="#1c2848" opacity="0.48"/>
+  <circle cx="1448" cy="132" r="27" fill="#253255" opacity="0.38"/>
+  <circle cx="1448" cy="132" r="16" fill="#2e3c62" opacity="0.28"/>
+
+  <!-- Distant Iron Mountains — cold blue-grey haze -->
+  <polygon fill="#0d1628" points="
+    0,700
+    0,490
+    55,408 95,448 138,365 185,415 235,338 285,395
+    332,315 388,382 442,298 498,368 548,288 605,358
+    655,278 712,348 762,268 820,338 868,258 928,328
+    978,248 1038,318 1088,238 1148,308 1198,228 1258,298
+    1308,218 1368,288 1418,208 1478,278 1528,198 1588,268
+    1638,212 1698,282 1748,202 1808,272 1858,218 1920,262
+    1920,700
+  "/>
+
+  <!-- Mid hills — rocky, darker -->
+  <polygon fill="#09101e" points="
+    0,800
+    0,648
+    65,572 125,618 188,542 248,598 308,528 368,582
+    428,512 488,572 548,502 608,558 668,492 728,548
+    788,482 848,538 908,472 968,528 1028,462 1088,518
+    1148,452 1208,508 1268,442 1328,498 1388,432 1448,488
+    1508,422 1568,478 1628,412 1688,468 1748,402 1808,458
+    1868,395 1920,445
+    1920,800
+  "/>
+
+  <!-- Valley mist between hills and forest -->
+  <rect y="775" width="1920" height="110" fill="url(#mist)"/>
+
+  <!-- Dense Taur-nu-Fuin — forest under night, pine silhouettes -->
+  <polygon fill="#050709" points="
+    0,1080 0,892
+    15,865 30,838 45,870 60,832 75,862 90,825 105,858 120,820
+    135,855 150,815 165,852 180,812 195,848 210,808 225,845 240,805
+    255,842 270,802 285,840 300,798 315,838 330,795 345,836 360,792
+    375,834 390,790 405,832 420,788 435,830 450,785 465,828 480,782
+    495,826 510,780 525,824 540,778 555,822 570,775 585,821 600,773
+    615,820 630,772 645,818 660,770 675,817 690,768 705,816 720,766
+    735,815 750,765 765,814 780,763 795,814 810,762 825,813 840,761
+    855,812 870,760 885,811 900,759 915,810 930,758 945,810 960,757
+    975,809 990,756 1005,808 1020,755 1035,808 1050,755 1065,807 1080,754
+    1095,806 1110,753 1125,806 1140,752 1155,805 1170,752 1185,804 1200,751
+    1215,804 1230,751 1245,803 1260,750 1275,803 1290,750 1305,802 1320,749
+    1335,802 1350,749 1365,801 1380,748 1395,801 1410,748 1425,800 1440,748
+    1455,800 1470,747 1485,799 1500,747 1515,799 1530,746 1545,799 1560,746
+    1575,798 1590,746 1605,797 1620,745 1635,797 1650,745 1665,797 1680,745
+    1695,796 1710,745 1725,796 1740,744 1755,796 1770,744 1785,795 1800,744
+    1815,795 1830,743 1845,795 1860,743 1875,794 1890,743 1905,794 1920,792
+    1920,1080
+  "/>
+</svg>
